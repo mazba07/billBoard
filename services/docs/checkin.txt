@@ -1,0 +1,295 @@
+Checkin URL
+http://40.84.154.51:8085/checkin
+
+SAMPLE:
+http://40.84.154.51:8085/checkin?pl={ "server": "MainServer", "playerID": 0, "volume": 10, ....}
+http://40.84.154.51:8085/checkin?pl=96
+
+
+--------------------------------------------------
+Send to the Webservice
+{
+  "server": "example",
+  "playerID": 0,
+  "displays": [
+    {
+      "port": "DisplayPort-0",
+      "orientation": "Landscape",
+      "resolution": "1920x1200"
+    }
+  ],
+  "volume": "68",
+  "sleepTime": "16:35",
+  "wakeupTime": "2016-09-09 00:00:00",
+  "screenshot": 1,
+  "disableMouse": "true",
+  "accessPoint": {
+    "ssid": "RMG-SSID",
+    "mode": "client",
+    "username": "Martin.Johnsson@rmgnetworks.com",
+    "password": "Sparten118",
+    "security": [
+      "WPA1",
+      "WPA2",
+      "802.1X"
+    ]
+  },
+  "osVersion": "Ubuntu 16.04.1 LTS",
+  "cpuUsage": "1.96581",
+  "availableMemory": "1489",
+  "diskSpace": "74G",
+  "playerTime": "2016-09-09 00:00:00",
+  "macAddress": [
+    {
+      "interface": "enp4s0",
+      "address": "00:01:da:f0:f4:65"
+    },
+    {
+      "interface": "wlp3s0",
+      "address": "3c:a9:f4:3c:a0:94"
+    }
+  ],
+  "player_name": "finalTest",
+  "graphicsCard": "Graphics Card Info",
+  "heartbeatInterval": 2,
+  "checkinInterval": 2,
+  "screenshotInterval": 2,
+  "logLevel": "ALL"
+}
+
+
+--------------------------------------------------
+Retreieve back from the webservice (2 cases)
+(1) Without a playlist
+{
+  "playerID": 308,
+  "name": "Temporary",
+  "description": "Temporary",
+  "status": "Temporary",
+  "tags": "Temporary",
+  "updated": "2016-12-31T23:59:59.000Z",
+  "playlists": []
+}
+
+(2) With a playlist
+{
+  "playerID": 38,
+  "name": "Dallas HQ 001   ",
+  "status": "Active",
+  "street": "Rock Street",
+  "city": "US",
+  "country": "US - United States",
+  "state": "DE",
+  "floor": "36",
+  "room": "4",
+  "notes": "my notes",
+  "zip": "1000",
+  "description": "new description",
+  "tags": "new tags",
+  "aspectRatio": "16:9",
+  "resolution": "720P",
+  "orientation": "Portrait",
+  "volume": "68",
+  "updated": null,
+  "playlists": [
+    {
+      "id": 125,
+      "name": "GeorgeP",
+      "description": "monday stuff",
+      "tags": "Cowboys, NFL, Texans",
+      "defaultDuration": 30,
+      "created": "2016-12-08T20:41:57.000Z",
+      "defaultAnimation": "Fade In Up Big",
+      "updated": null,
+      "selected_tags": "",
+      "playFull": 1,
+      "dynamic": 1,
+      "numberOfItems": 0,
+      "playtimes": [
+        {
+          "id": 5,
+          "hasSchedule": 0,
+          "startDate": "00:00:00",
+          "endDate": "0000-00-00",
+          "hasTimeWeekdaySchedule": 0,
+          "endTime": "00:00:00",
+          "days": "",
+          "created": "2016-12-08T20:41:57.000Z",
+          "playlist_id": 125
+        },
+        {
+          "id": 6,
+          "hasSchedule": 1,
+          "startDate": "10:00:00",
+          "endDate": "2016-12-12T00:00:00.000Z",
+          "hasTimeWeekdaySchedule": 1,
+          "endTime": "12:00:00",
+          "days": "45",
+          "created": "2016-12-08T21:38:05.000Z",
+          "playlist_id": 125
+        },
+        {
+          "id": 23,
+          "hasSchedule": 0,
+          "startDate": "00:00:00",
+          "endDate": "1970-01-01T00:00:00.000Z",
+          "hasTimeWeekdaySchedule": 0,
+          "endTime": "00:00:00",
+          "days": "",
+          "created": "2016-12-12T09:33:29.000Z",
+          "playlist_id": 125
+        }
+      ],
+      "items": [
+        {
+          "id": 51,
+          "name": "DC Dashboard",
+          "author": "user",
+          "tags": "DC Dashboard",
+          "expirationDate": "2016-12-03T00:00:00.000Z",
+          "uri": "http://13.84.42.133/dc-dashboard-2/"
+        },
+        {
+          "id": 52,
+          "name": "Fall Sale",
+          "author": "user",
+          "tags": "Fall Sale",
+          "expirationDate": "2016-12-04T00:00:00.000Z",
+          "uri": "http://13.84.42.133/fall-sale-2/"
+        },
+        {
+          "id": 92,
+          "name": "DEV Show",
+          "author": "user",
+          "tags": "DEV",
+          "expirationDate": "2016-11-30T00:00:00.000Z",
+          "uri": "http://13.84.42.133/screen/dev-show-7/"
+        },
+        {
+          "id": 98,
+          "name": "Fall Menswear Sale",
+          "author": "user",
+          "tags": "fall, menswear",
+          "expirationDate": "2016-12-31T00:00:00.000Z",
+          "uri": "http://13.84.42.133/screen/fall-menswear-sale/"
+        }
+      ]
+    },
+    {
+      "id": 128,
+      "name": "Thamer",
+      "description": "Thamer",
+      "tags": "Thamer",
+      "defaultDuration": 30,
+      "created": "2016-12-09T16:35:10.000Z",
+      "defaultAnimation": "Flip",
+      "updated": null,
+      "selected_tags": null,
+      "playFull": 1,
+      "dynamic": 0,
+      "numberOfItems": 2,
+      "playtimes": [
+        {
+          "id": 11,
+          "hasSchedule": 0,
+          "startDate": "00:00:00",
+          "endDate": "0000-00-00",
+          "hasTimeWeekdaySchedule": 0,
+          "endTime": "00:00:00",
+          "days": "",
+          "created": "2016-12-09T16:35:10.000Z",
+          "playlist_id": 128
+        },
+        {
+          "id": 12,
+          "hasSchedule": 1,
+          "startDate": "00:00:00",
+          "endDate": "2017-06-29T00:00:00.000Z",
+          "hasTimeWeekdaySchedule": 0,
+          "endTime": "00:00:00",
+          "days": "",
+          "created": "2016-12-09T16:37:02.000Z",
+          "playlist_id": 128
+        },
+        {
+          "id": 13,
+          "hasSchedule": 1,
+          "startDate": "00:00:00",
+          "endDate": "2016-12-31T00:00:00.000Z",
+          "hasTimeWeekdaySchedule": 0,
+          "endTime": "00:00:00",
+          "days": "",
+          "created": "2016-12-09T16:39:21.000Z",
+          "playlist_id": 128
+        },
+        {
+          "id": 14,
+          "hasSchedule": 1,
+          "startDate": "02:00:00",
+          "endDate": "1970-01-01T00:00:00.000Z",
+          "hasTimeWeekdaySchedule": 1,
+          "endTime": "13:12:00",
+          "days": "12345",
+          "created": "2016-12-09T16:46:49.000Z",
+          "playlist_id": 128
+        },
+        {
+          "id": 25,
+          "hasSchedule": 0,
+          "startDate": "00:00:00",
+          "endDate": "1970-01-01T00:00:00.000Z",
+          "hasTimeWeekdaySchedule": 0,
+          "endTime": "00:00:00",
+          "days": "",
+          "created": "2016-12-12T13:52:40.000Z",
+          "playlist_id": 128
+        },
+        {
+          "id": 28,
+          "hasSchedule": 1,
+          "startDate": "12:00:00",
+          "endDate": "1970-01-01T00:00:00.000Z",
+          "hasTimeWeekdaySchedule": 0,
+          "endTime": "12:00:00",
+          "days": "0123456",
+          "created": "2016-12-12T14:04:02.000Z",
+          "playlist_id": 128
+        }
+      ],
+      "items": [
+        {
+          "id": 98,
+          "name": "Fall Menswear Sale",
+          "author": "user",
+          "tags": "fall, menswear",
+          "expirationDate": "2016-12-31T00:00:00.000Z",
+          "uri": "http://13.84.42.133/screen/fall-menswear-sale/"
+        },
+        {
+          "id": 99,
+          "name": "George",
+          "author": "user",
+          "tags": "",
+          "expirationDate": "2020-12-12T00:00:00.000Z",
+          "uri": "http://13.84.42.133/screen/george/"
+        },
+        {
+          "id": 105,
+          "name": "Winter Sale",
+          "author": "Ben Johnston",
+          "tags": "winter, sale, retail",
+          "expirationDate": "2017-01-30T00:00:00.000Z",
+          "uri": "http://13.84.42.133/screen/winter-sale-3/"
+        },
+        {
+          "id": 186,
+          "name": "DC Dashboard - duplicate",
+          "author": "user",
+          "tags": "DC Dashboard",
+          "expirationDate": "2016-12-03T00:00:00.000Z",
+          "uri": "http://13.84.42.133/screen/dc-dashboard-duplicate-2/"
+        }
+      ]
+    }
+  ]
+}

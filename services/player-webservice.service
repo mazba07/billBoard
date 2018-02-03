@@ -1,0 +1,25 @@
+### BEGIN INIT INFO
+# Provides: player-webservice
+# Required-Start: $network $local_fs $named
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: RMG Maestro platform player webservice
+# Description: RMG Maestro platform player webservice
+### END INIT INFO
+
+[Unit]
+Description=Maestro Player Webservice
+Documentation=https://www.rmgnetworks.com
+After=network.target
+
+[Service]
+Environment=NODE_PORT=8085
+Type=simple
+User=root
+WorkingDirectory=/var/www/html/services
+ExecStart=/usr/bin/node app.js
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

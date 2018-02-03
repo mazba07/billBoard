@@ -1,0 +1,13 @@
+PlayerLogs URL
+http://40.84.154.51:8085/playerlog
+
+SAMPLE:
+Use POST Method
+--------------------------------------------------
+Send to the Webservice
+
+**Use a POST to upload a copy of the player log.
+--------------------------------------------------
+Retreieve back from the Heartbeat Webservice
+(1) Nothing
+

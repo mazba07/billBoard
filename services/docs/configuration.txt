@@ -1,0 +1,38 @@
+Configuration URL
+http://40.84.154.51:8085/configuration
+
+SAMPLE:
+http://40.84.154.51:8085/configuration?pl={ "playerID": 209 }
+
+--------------------------------------------------
+Send to the Webservice
+
+{
+  "playerID": 95
+}
+
+--------------------------------------------------
+Retreieve back from the webservice (1 case)
+(1) With changes or without changes
+{
+  "playerid": "95",
+  "player_name": "finalTest",
+  "street": null,
+  "city": null,
+  "state": null,
+  "floor": null,
+  "room": null,
+  "notes": null,
+  "zip": null,
+  "description": null,
+  "server": "example",
+  "volume": "68",
+  "sleeptime": "16:35",
+  "wakeuptime": "2016-09-09T05:00:00.000Z",
+  "screenshot": 1,
+  "disablemouse": "true",
+  "loglevel": "ALL",
+  "heartbeatinterval": 2,
+  "checkininterval": 2,
+  "screenshotinterval": 2
+}

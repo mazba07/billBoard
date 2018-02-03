@@ -1,0 +1,45 @@
+Heartbeat URL
+http://40.84.154.51:8085/heartbeat
+
+SAMPLE:
+http://40.84.154.51:8085/heartbeat?pl={ "playerID": 209, "status": "alive" }
+--------------------------------------------------
+Send to the Webservice
+
+{
+  "playerID": 209,
+  "status": "active"
+}
+
+--------------------------------------------------
+Retreieve back from the Heartbeat webservice (2 cases)
+(1) With no actions
+{
+  "actions": []
+}
+
+(2)With actions:
+{
+  "actions": [
+    {
+      "action": "reboot",
+      "created_dt": "2016-12-06T20:25:14.000Z"
+    },
+    {
+      "action": "screenshot",
+      "created_dt": "2016-12-06T20:25:14.000Z"
+    },
+    {
+      "action": "configuration",
+      "created_dt": "2016-12-06T20:25:14.000Z"
+    },
+    {
+      "action": "playerlog",
+      "created_dt": "2016-12-06T20:25:14.000Z"
+    },
+    {
+      "action": "checkin",
+      "created_dt": "2016-12-06T20:25:14.000Z"
+    }
+  ]
+}

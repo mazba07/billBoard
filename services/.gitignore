@@ -1,0 +1,13 @@
+.vscode
+.vscode/*
+config/settings.js
+node_modules
+node_modules/*
+test/content
+test/content/*
+logs
+logs/*
+*.log
+screenshots
+screenshots/*
+*.jpg

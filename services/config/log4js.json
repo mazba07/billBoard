@@ -1,0 +1,57 @@
+{
+    "appenders": [
+    {
+      "type": "clustered",
+      "appenders": [
+        { 
+          "type": "console"
+        },
+        {
+          "type": "dateFile",
+          "filename": "./logs/access.log",
+          "pattern": "-yyyy-MM-dd",
+          "category": "http",
+          "backups": 10,
+          "alwaysIncludePattern": false,
+          "level": "ALL"
+        },
+        {
+          "type": "dateFile",
+          "filename": "./logs/server.log",
+          "pattern": "-yyyy-MM-dd",
+          "category": "server",
+          "backups": 10,
+          "alwaysIncludePattern": false,
+          "level": "ALL"
+        },
+        {
+          "type": "dateFile",
+          "filename": "./logs/subscriptions.log",
+          "pattern": "-yyyy-MM-dd",
+          "category": "subscription",
+          "backups": 10,
+          "alwaysIncludePattern": false,
+          "level": "ALL"
+        },
+        {
+          "type": "dateFile",
+          "filename": "./logs/playerStatus.log",
+          "pattern": "-yyyy-MM-dd",
+          "category": "playerStatus",
+          "backups": 10,
+          "alwaysIncludePattern": false,
+          "level": "ALL"
+        },
+        {
+          "type": "dateFile",
+          "filename": "./logs/rulesAudience.log",
+          "pattern": "-yyyy-MM-dd",
+          "category": "rulesAudience",
+          "backups": 10,
+          "alwaysIncludePattern": false,
+          "level": "ALL"
+        }
+      ]
+    }
+  ]
+}
