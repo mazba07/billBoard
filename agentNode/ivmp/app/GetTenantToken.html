@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<!-- 
+-- Base Player Document for InView
+-- Author: Eric Meyer
+!-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>KORBYT&trade; INVIEW</title>
+    <meta name="viewport" content="width=device-width">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script src="jquery.js" onload="window.$ = window.jQuery = module.exports;"></script>
+    <script src="PlayerHelper.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0
+        }
+        
+        body {
+            font-family: Roboto, "Century Gothic", Arial;
+            background: #F8F8F8;
+        }
+        /*tenant Styles*/
+        
+        .tenantOuter {
+            height: 90vh;
+            width: 90vw;
+            position: relative;
+        }
+        
+        #tenantMod {
+            width: 100%;
+            height: 100%;
+            background: #F8F8F8;
+            position: absolute;
+            top: 5%;
+            transform: translate(0%, 0%);
+            left: 5%;
+            overflow: hidden
+        }
+        
+        #tenantMod .tenantInner {
+            margin: 70px 20px 0
+        }
+        
+        #tenantMod .btns {
+            position: absolute;
+            margin-top: 17px;
+            width: 100%;
+            color: #fff;
+            text-align: center;
+            height: 12vmin;
+            line-height: 12vmin;
+            font-size: 6vmin;
+            text-decoration: none;
+            text-shadow: 1px 0 1px #000
+        }
+        
+        #tenantMod .error {
+            color: #c90000;
+            text-decoration: none;
+            margin-top: .1vmin;
+            display: inline-block;
+            margin-right: 2vmin;
+            font-size: 3.5vmin;
+        }
+        
+        #tenantMod .submitTenant {
+            background: #0093b1;
+            right: 0;
+        }
+        
+        #tenantMod .btns:active {
+            opacity: .8;
+            font-size: 20px;
+            background: #00688f;
+        }
+        
+        #tenantMod .btns:hover {
+            opacity: .8;
+        }
+        
+        #tenantMod .tenantInner label {
+            display: block;
+            font-size: 6vmin;
+            /*vertical-align: middle;*/
+            letter-spacing: .1vmin;
+            margin-right: 2vmin;
+        }
+        
+        #tenantMod .tenantInner input[type=text] {
+            font-size: 6vmin;
+            width: 96%;
+            margin-top: 1vmin;
+            padding: 3px 1%
+        }
+        
+        .row {
+            margin-bottom: 17px
+        }
+        
+        #tenantMod .tenantInner .checkboxLbl {
+            display: inline;
+            font-size: 4vmin;
+            margin-left: 1vmin
+        }
+        
+        .tenantOuter .logo {
+            position: absolute;
+            right: 4vmin;
+            top: 1vmin;
+        }
+        
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="text/javascript">
+        var ipcRenderer = require('electron').ipcRenderer;
+        var env = require('./env');
+        var playerDoc;
+
+        var provisionService = env.provisioning;
+
+        function getProvisionUrl() {
+            return provisionService + '/v1/check';
+        }
+
+        function provision() {
+            var provisionURL = getProvisionUrl();
+            console.log(provisionURL);
+            $.ajax({
+                type: 'GET',
+                url: provisionURL + '?tt=' + $('#tenant_token').val()
+            }).done(function(data) {
+                console.info("Provisioning check returned: " + JSON.stringify(data));
+                if (data.provisioned) {
+                    ipcRenderer.send("provisioningResults", JSON.stringify(data));
+                } else {
+                    var errText = "invalid token";
+                    if (data.error) {
+                        errText = data.error;
+                    }
+                    $('#errmsg').html(`Unable to provision: ${errText}`);
+                }
+            }).fail(function(err) {
+                console.info("Provisioning check returned: " + JSON.stringify(err));
+                var status = 500;
+                var statusText = 'Unknown error';
+                if (err.responseJSON) {
+                    if (err.responseJSON.status) {
+                        status = err.responseJSON.status
+                    }
+                    if (err.responseJSON.error) {
+                        statusText = err.responseJSON.error;
+                    }
+                }
+                $('#errmsg').html(`Unable to provision: ${status} - ${statusText}`);
+            });
+        }
+
+        $(document).ready(function() {
+            var args = getParametersFromUrl();
+            console.info("show the tenant token form.");
+
+            $('#tenantForm').removeClass('hide');
+            $('#tenantForm').on('submit', function(e) {
+                provision();
+                e.preventDefault();
+                return true;
+            });
+
+        });
+    </script>
+    <form id="tenantForm" class="">
+        <div class="tenantOuter">
+            <div id="tenantMod"> <img src="inview-logo.png" class="logo">
+                <div class="tenantInner">
+                    <div class="row">
+                        <label for="tenant_token">Tenant Token</label>
+                        <input type="text" id="tenant_token" name="tenant_token">
+                    </div>
+                    <div class="row">
+                        <div id="errmsg" class="error"></div>
+                    </div>
+                </div>
+                <button type='submit' class='btns submitTenant' value='tenant'>Submit</button>
+            </div>
+        </div>
+    </form>
+</body>
+
+</html>

@@ -1,0 +1,885 @@
+(function() {
+    'use strict';
+
+    function _interopDefault(ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+    var path = _interopDefault(require('path'));
+    var url = require('url');
+    var electron = require('electron');
+    var fs = _interopDefault(require('fs-jetpack'));
+    var request = _interopDefault(require('request'));
+
+    var devMenuTemplate = {
+        label: 'Development',
+        submenu: [{
+            label: 'Toggle DevTools',
+            accelerator: 'Alt+CmdOrCtrl+I',
+            click: function() {
+                electron.BrowserWindow.getFocusedWindow().toggleDevTools();
+            }
+        }]
+    };
+
+    var stdMenuTemplate = {
+        label: 'Menu',
+        submenu: [{
+            label: 'Reload',
+            accelerator: 'CmdOrCtrl+R',
+            click: function() {
+                electron.BrowserWindow.getFocusedWindow().webContents.reloadIgnoringCache();
+            }
+        }]
+    };
+
+    // This helper remembers the size and position of your windows (and restores
+    // them in that place after app relaunch).
+    // Can be used for more than one window, just construct many
+    // instances of it and give each different name.
+
+    var createWindow = function(name, options) {
+
+        var userDataDir = fs.cwd(electron.app.getPath('userData'));
+        var stateStoreFile = 'window-state-' + name + '.json';
+        var defaultSize = {
+            width: options.width,
+            height: options.height
+        };
+        var state = {};
+        var win;
+
+        var restore = function() {
+            var restoredState = {};
+            try {
+                restoredState = userDataDir.read(stateStoreFile, 'json');
+            } catch (err) {
+                // For some reason json can't be read (might be corrupted).
+                // No worries, we have defaults.
+            }
+            return Object.assign({}, defaultSize, restoredState);
+        };
+
+        var getCurrentPosition = function() {
+            var position = win.getPosition();
+            var size = win.getSize();
+            return {
+                x: position[0],
+                y: position[1],
+                width: size[0],
+                height: size[1]
+            };
+        };
+
+        var windowWithinBounds = function(windowState, bounds) {
+            return windowState.x >= bounds.x &&
+                windowState.y >= bounds.y &&
+                windowState.x + windowState.width <= bounds.x + bounds.width &&
+                windowState.y + windowState.height <= bounds.y + bounds.height;
+        };
+
+        var resetToDefaults = function(windowState) {
+            var bounds = electron.screen.getPrimaryDisplay().bounds;
+            return Object.assign({}, defaultSize, {
+                x: (bounds.width - defaultSize.width) / 2,
+                y: (bounds.height - defaultSize.height) / 2
+            });
+        };
+
+        var ensureVisibleOnSomeDisplay = function(windowState) {
+            var visible = electron.screen.getAllDisplays().some(function(display) {
+                return windowWithinBounds(windowState, display.bounds);
+            });
+            if (!visible) {
+                // Window is partially or fully not visible now.
+                // Reset it to safe defaults.
+                return resetToDefaults(windowState);
+            }
+            return windowState;
+        };
+
+        var saveState = function() {
+            if (!win.isMinimized() && !win.isMaximized()) {
+                Object.assign(state, getCurrentPosition());
+            }
+            userDataDir.write(stateStoreFile, state, { atomic: true });
+        };
+
+        state = ensureVisibleOnSomeDisplay(restore());
+
+        win = new electron.BrowserWindow(Object.assign({}, options, state));
+
+        win.on('close', saveState);
+
+        return win;
+    };
+
+    // Updated 01/12/2017
+    const moment = require("moment");
+    //import webDriver = require('selenium-webdriver');
+    var ContentType;
+    (function(ContentType) {
+        ContentType[ContentType["Content"] = 0] = "Content";
+        ContentType[ContentType["Playlist"] = 1] = "Playlist";
+        ContentType[ContentType["Player"] = 2] = "Player";
+    })(ContentType || (ContentType = {}));
+    class Playable {
+        constructor(contentType, whatami) {
+            this.contentType = contentType;
+            this.whatami = whatami;
+            this.playing = false;
+            this.lastCycle = -1;
+            this.runtime = 0; // forever
+        }
+        onScheduleTimer(now) {
+            //console.log(this.whatami + ": " + now.toISOString());
+            if (this.runtime > 0) {
+                var elapsed = now.diff(this.started);
+                if (elapsed >= this.runtime) {
+                    this.stop();
+                }
+            }
+        }
+        isPlayable(now, cycle) {
+            return (!this.playing) && (this.lastCycle != cycle);
+        }
+        start(now, cycle) {
+            this.started = now;
+            this.lastCycle = cycle;
+            this.playing = true;
+        }
+        stop() {
+            this.playing = false;
+        }
+    }
+    class Content extends Playable {
+        constructor(json, defaultanimation, defaultruntime) {
+                var who = json.name || json.uri;
+                super(ContentType.Content, "Content(" + who + ")");
+                this.id = json.id;
+                this.name = json.name;
+                this.uri = json.uri;
+                if (json.duration) {
+                    this.runtime = json.runtime * 1000;
+                } else {
+                    this.runtime = defaultruntime * 1000;
+                }
+                if (json.animation) {
+                    // Convert the animation string into the CSS class name of the class by camel casing it.
+                    this.animation = this.camelize(json.animation);
+                } else {
+                    this.animation = this.camelize(defaultanimation);
+                }
+            }
+            // Camel case the string passed
+        camelize(str) {
+            return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function(match, index) {
+                if (+match === 0)
+                    return ""; // or if (/\s+/.test(match)) for white spaces
+                return index == 0 ? match.toLowerCase() : match.toUpperCase();
+            });
+        }
+        start(now, cycle) {
+            super.start(now, cycle);
+            if (PlayerEngine.callback) {
+                PlayerEngine.callback(this.uri, this.animation);
+            }
+        }
+    }
+    class Schedule {
+        constructor(json) {
+            this.playalways = json.playalways;
+            if (!this.playalways) {
+                if (json.start_date == "0000-00-00") {
+                    this.start_date = moment("1970-01-01 00:00:00", "YYYY-MM-DD HH:mm:ss");
+                }
+                if (json.end_date == "0000-00-00") {
+                    this.end_date = moment("9999-12-31 23:59:59", "YYYY-MM-DD HH:mm:ss");
+                }
+                this.start_date = moment(json.start_date.substr(0, 10) + " 00:00:00", "YYYY-MM-DD HH:mm:ss");
+                this.end_date = moment(json.end_date.substr(0, 10) + " 23:59:59", "YYYY-MM-DD HH:mm:ss");
+                this.timedays = json.timedays;
+                if (this.timedays) {
+                    this.start_time = moment(json.start_time.substr(0, 5), "HH:mm");
+                    this.end_time = moment(json.end_time.substr(0, 5), "HH:mm");
+                    if (this.start_time.isSameOrAfter(this.end_time)) {
+                        this.end_time = this.end_time.add(24, "hour");
+                    }
+                    if (this.end_time.isSame(moment("00:00", "HH:mm"))) {
+                        this.end_time = this.end_time.add(24, "hour");
+                    }
+                    // convert digit string to bits
+                    var dow = 0;
+                    for (var i = 0; i < 7; i++) {
+                        if (json.weekdays.indexOf("" + i) >= 0) {
+                            dow = dow | (1 << i);
+                        }
+                    }
+                    this.daysOfWeek = dow;
+                }
+            }
+        }
+        isScheduled(now) {
+            if (this.playalways) {
+                return this.playalways;
+            }
+            if (!now.isBetween(this.start_date, this.end_date)) {
+                return false;
+            }
+            if (this.timedays) {
+                var tod = moment(now.format("HH:mm"), "HH:mm");
+                if (!tod.isBetween(this.start_time, this.end_time)) {
+                    return false;
+                }
+                var weekday = now.isoWeekday() == 7 ? 0 : now.isoWeekday();
+                var dow = (1 << weekday);
+                if ((this.daysOfWeek & dow) != dow) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+    class PlayableList extends Playable {
+        constructor(contentType, whatami) {
+            super(contentType, whatami);
+            this.playlist = [];
+            this.cycle = 0;
+            this.offset = 0;
+        }
+        onScheduleTimer(now) {
+            //console.info("In onScheduleTimer: " + this.whatami);
+            if (this.active) {
+                this.active.onScheduleTimer(now);
+                if (this.active.playing) {
+                    return;
+                }
+            }
+            if (this.batch <= 0) {
+                this.stop();
+                return;
+            }
+            let pc = this.playlist.length;
+            for (let i = 0; i < pc; i++) {
+                var ci = this.playlist[i];
+                if (ci.isPlayable(now, this.cycle)) {
+                    if (ci.contentType == ContentType.Playlist) {
+                        console.info('Playlist: ' + ci.whatami);
+                    } else {
+                        console.info('   item[' + i + ']: ' + ci.whatami);
+                    }
+                    ci.start(now, this.cycle);
+                    this.active = ci;
+                    this.batch--;
+                    return;
+                }
+            }
+            this.cycle++;
+        }
+        start(now, cycle) {
+            super.start(now, cycle);
+            this.batch = ((this.itemsper <= 0) || (this.itemsper > this.playlist.length)) ? this.playlist.length : this.itemsper;
+        }
+    }
+    class Playlist extends PlayableList {
+        constructor(json) {
+            super(ContentType.Playlist, "playlist(" + json.name + ")");
+            this.id = json.id;
+            this.name = json.name;
+            this.description = json.name;
+            this.defaultruntime = json.defaultruntime;
+            this.defaultanimation = json.defaultanimation;
+            this.playfull = json.playfull;
+            this.itemsper = json.itemsper;
+            this.playtimes = [];
+            if (json.playtimes) {
+                for (var i = 0; i < json.playtimes.length; i++) {
+                    this.playtimes.push(new Schedule(json.playtimes[i]));
+                }
+            }
+            this.playlist = [];
+            if (json.items) {
+                for (var i = 0; i < json.items.length; i++) {
+                    this.playlist.push(new Content(json.items[i], this.defaultanimation, this.defaultruntime));
+                }
+            }
+            this.cycle = 0;
+        }
+        isPlayable(now, cycle) {
+            var playable = super.isPlayable(now, cycle);
+            if (playable) {
+                if (this.isScheduled(now)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        isScheduled(now) {
+            if (this.playtimes) {
+                if (this.playtimes.length == 0) {
+                    return true;
+                }
+                for (var i = 0; i < this.playtimes.length; i++) {
+                    if (this.playtimes[i].isScheduled(now)) {
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+    class Player extends PlayableList {
+        constructor(json) {
+            super(ContentType.Player, "player");
+            this.id = json.id;
+            this.name = json.name;
+            this.description = json.description;
+            this.status = json.status;
+            this.playlist = [];
+            if (json.playlists) {
+                for (var i = 0; i < json.playlists.length; i++) {
+                    this.playlist.push(new Playlist(json.playlists[i]));
+                }
+            }
+        }
+        start(now, cycle) {
+            // meaningless for the player
+        }
+        stop() {
+            // meaningless for the player
+        }
+    }
+    class PlayerEngine {
+        constructor(callback) {
+            PlayerEngine.callback = callback;
+        }
+        setInstructions(instructions) {
+            var newInstructions = JSON.stringify(instructions);
+            if (this.oldInstructions) {
+                if (this.oldInstructions != newInstructions) {
+                    this.player.stop();
+                }
+            }
+            this.oldInstructions = newInstructions;
+            this.player = new Player(instructions);
+            this.start();
+        }
+        start() {
+            if (this.timer) {
+                return; // already running.
+            }
+            var self = this;
+            self.timer = setInterval(() => { self.player.onScheduleTimer(moment(new Date)); }, 1000);
+        }
+        stop() {
+            if (this.timer) {
+                clearInterval(this.timer);
+            }
+            this.timer = undefined;
+        }
+    }
+    PlayerEngine.callback = null;
+
+    // Simple wrapper exposing environment variables to rest of the code.
+
+    // The variables have been written to `env.json` by the build process.
+    var env = fs.cwd(__dirname).read('env.json', 'json');
+
+    var configFile;
+    var config = {};
+
+    config.load = function() {
+        configFile = path.join(electron.app.getPath('userData'), 'config.json');
+        if (fs.exists(configFile)) {
+            try {
+                config.settings = fs.read(configFile, 'json');
+            } catch (err) {
+                config.settings = {};
+                console.error(err);
+            }
+        } else {
+            config.settings = {};
+        }
+    };
+
+    config.save = function() {
+        if (configFile) {
+            fs.write(configFile, JSON.stringify(config.settings), 'utf-8');
+        } else {
+            throw 'config file name not set, you must load before you save.';
+        }
+    };
+
+    // This is main process of Electron, started as first thing when your
+    // app starts. This script is running through entire life of your application.
+    // It doesn't have any windows which you can see on screen, but we can open
+    // window from here.
+
+    // Special module holding environment variables which you declared
+    // in config/env_xxx.json file.
+    var mainWindow;
+    var loginWindow;
+    var tenantWindow;
+    const iconPath = path.join(__dirname, "InView.png");
+    var appIcon;
+    var player;
+    var eNotify;
+    var demoTimer;
+    var loginDetails;
+    var userDetails;
+    var dataSettings;
+    var snoozeTimer;
+
+
+    var setApplicationMenu = function(option) {
+        if (option === null) {
+            electron.Menu.setApplicationMenu(null);
+        } else {
+            var menus = [stdMenuTemplate];
+            if (env.name !== 'production') {
+                menus.push(devMenuTemplate);
+            }
+            electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate(menus));
+        }
+    };
+
+    // Save userData in separate folders for each environment.
+    // Thanks to this you can use production and development versions of the app
+    // on same machine like those are two separate apps.
+    if (env.name !== 'production') {
+        var userDataPath = electron.app.getPath('userData');
+        electron.app.setPath('userData', userDataPath + ' (' + env.name + ')');
+    }
+
+    electron.app.on('ready', function() {
+        config.load();
+
+        if (config.settings.tenant_token) {
+            startInview();
+        } else {
+            tenantWindow = createWindow('getTenant', {
+                width: 500,
+                height: 440,
+                show: true,
+                center: true,
+                resizable: false,
+                skipTaskBar: true,
+                title: "InView get tenant token",
+                minimizable: false,
+                maximizable: false,
+                alwaysOnTop: false,
+                closable: true
+            });
+
+            electron.ipcMain.once('provisioningResults', function(event, arg) {
+                try {
+                    tenantWindow.hide();
+                    var pr = JSON.parse(arg);
+                    config.settings.cms = pr.cms;
+                    config.settings.webService = pr.webService;
+                    config.settings.tenant_token = pr.tenant_token;
+                    config.save();
+                    startInview();
+                } catch (err) {
+
+                }
+            });
+            setApplicationMenu(null);
+            tenantWindow.loadURL(path.join(__dirname, 'GetTenantToken.html'));
+        }
+    });
+    electron.app.on('window-all-closed', function() {
+        electron.app.quit();
+    });
+
+    function startInview() {
+        appIcon = new electron.Tray(iconPath);
+
+        eNotify = require('electron-notify');
+        eNotify.setConfig({
+            appIcon: iconPath,
+            displayTime: 60000
+        });
+
+        loginWindow = createWindow('login', {
+            width: 618,
+            height: 580,
+            show: true,
+            center: true,
+            resizable: false,
+            skipTaskBar: true,
+            title: "InView Login",
+            minimizable: false,
+            maximizable: false,
+            alwaysOnTop: false,
+            closable: true
+        });
+
+        if (tenantWindow) {
+            setTimeout(function() {
+                if (tenantWindow) {
+                    tenantWindow.destroy();
+                    tenantWindow = null;
+                }
+            }, 1000);
+        }
+
+        electron.ipcMain.once('loginResults', function(event, arg) {
+            try {
+                //console.info(arg);
+                var loginResults = JSON.parse(arg);
+                loginDetails = loginResults.loginDetails;
+                userDetails = loginResults.userDetails;
+                dataSettings = loginResults.dataSettings;
+                setInterval(checkForAlerts, 15000);
+
+                var options = {
+                    width: 576,
+                    height: 1024,
+                    center: false,
+                    show: true,
+                    maximizable: false,
+                    minimizable: userDetails.snooze == 1,
+                    resizable: userDetails.resizable == 1,
+                    alwaysOnTop: userDetails.always_on_top == 1,
+                    closable: false
+                };
+
+                if (env.titlebar === false) {
+                    options.frame = false;
+                    options.transparent = true;
+                }
+
+                var lastPositionFile = path.join(electron.app.getPath('userData'), 'lastposition.json');
+                console.info(lastPositionFile);
+                if (fs.exists(lastPositionFile)) {
+                    var hadError = false;
+                    var bounds;
+                    try {
+                        console.info("Loading " + lastPositionFile);
+                        var ws = fs.read(lastPositionFile, 'utf-8');
+                        bounds = JSON.parse(ws);
+                        options.x = bounds.x;
+                        options.y = bounds.y;
+                        options.width = bounds.width;
+                        options.height = bounds.height;
+                    } catch (err) {
+                        console.error(err);
+                        hadError = true;
+                    }
+                    console.info(JSON.stringify(options));
+                    mainWindow = createWindow('main', options);
+                    if (!hadError) {
+                        setTimeout(function() {
+                            console.info("Setting bounds to: " + JSON.stringify(bounds));
+                            mainWindow.setBounds(bounds);
+                        }, 1000);
+                    }
+                } else {
+                    mainWindow = createWindow('main', options);
+                }
+
+
+                mainWindow.loadURL(path.join(__dirname, 'PageHost.html'));
+
+                if ((userDetails.snooze == 1) && (userDetails.duration_of_snooze > 0)) {
+                    console.info('Setting a minimize (snooze) event handler');
+
+                    mainWindow.on('minimize', function(e) {
+                        if (snoozeTimer) {
+                            clearTimeout(snoozeTimer);
+                            snoozeTimer = undefined;
+                        }
+                        var seconds = userDetails.duration_of_snooze;
+                        var units;
+                        if (seconds < 10) {
+                            seconds *= 60;
+                            units = 'minutes';
+                        } else {
+                            units = 'seconds';
+                        }
+
+                        console.info(`Setting a snooze timer for ${userDetails.duration_of_snooze} ${units}`);
+                        snoozeTimer = setTimeout(function() {
+
+                            snoozeTimer = undefined;
+                            if (mainWindow.isMinimized()) {
+                                console.info("Time for snoozing is over, waking up and restoring the window");
+                                mainWindow.restore();
+                            }
+                        }, seconds * 1000);
+                    });
+                }
+
+                electron.ipcMain.on('ready', function() {
+                    var req = { cmd: 'goto', args: [config.settings.cms + '/prt/inview.html?services=' + config.settings.webService] };
+                    mainWindow.webContents.send('request', JSON.stringify(req));
+                });
+
+                electron.ipcMain.on('message', function(event, msgString) {
+                    try {
+                        console.info('Received: ' + msgString);
+                        var msg = JSON.parse(msgString);
+                        switch (msg.cmd.toLowerCase()) {
+                            case 'getloginresults':
+                                console.info('Sending login results');
+                                var lr = { type: 'loginResults', loginDetails: loginDetails, userDetails: userDetails };
+                                event.sender.send('loginResults', JSON.stringify(lr));
+                                break;
+                            case 'snooze':
+                                mainWindow.minimize();
+                                break;
+                            case 'poptotop':
+                                if (mainWindow.isMinimized) {
+                                    mainWindow.restore();
+                                } else {
+                                    mainWindow.minimize();
+                                    setTimeout(function() { mainWindow.restore(); }, 100);
+                                }
+                                break;
+                            case 'setwindowtitle':
+                                if (mainWindow) {
+                                    mainWindow.setWindo;
+                                }
+                                break;
+                            case 'setwindowsize':
+                                if (mainWindow) {
+                                    var pos = mainWindow.getBounds();
+                                    var arg = msg.arg;
+                                    var anchor = 'top';
+                                    if (arg.anchor) {
+                                        anchor = arg.anchor.toLowerCase();
+                                    }
+
+                                    arg.width = arg.width === undefined ? pos.width : arg.width;
+                                    arg.height = arg.height === undefined ? pos.height : arg.height;
+                                    if (arg.width < 1) {
+                                        arg.width = pos.width;
+                                    }
+                                    if (arg.height < 1) {
+                                        arg.height = pos.height;
+                                    }
+
+                                    switch (anchor) {
+                                        case 'bottomleft':
+                                        case 'bl':
+                                        case 'bottom':
+                                        case 'b':
+                                            pos.y += pos.height - arg.height;
+                                            break;
+                                        case 'topright':
+                                        case 'tr':
+                                        case 'right':
+                                        case 'r':
+                                            pos.x += pos.width - arg.width;
+                                            break;
+                                        case 'bottomright':
+                                        case 'br':
+                                            pos.y += pos.height - arg.height;
+                                            pos.x += pos.width - arg.width;
+                                            break;
+                                        case 'center':
+                                        case 'c':
+                                            pos.y += Math.floor((pos.height - arg.height) / 2);
+                                            pos.x += Math.floor((pos.width - arg.width) / 2);
+                                            break;
+                                    }
+                                    pos.width = arg.width;
+                                    pos.height = arg.height;
+                                    mainWindow.setBounds(pos);
+                                }
+                                break;
+                        }
+                    } catch (err) {
+                        console.error(err);
+                    }
+                });
+
+                if (loginWindow) {
+                    loginWindow.destroy();
+                    loginWindow = null;
+                }
+
+                setApplicationMenu(null);
+            } catch (err) {
+                console.error('Error getting loginDetails ' + err);
+            }
+        });
+
+        loginWindow.loadURL(path.join(__dirname, 'login-inview.html'));
+
+        var contextMenuTemplate = [{
+            label: 'Reload',
+            click: function() {
+                if (mainWindow) {
+                    mainWindow.webContents.reloadIgnoringCache();
+                }
+            }
+        }];
+
+        if (env.name !== 'production') {
+            contextMenuTemplate.push({
+                label: 'Electron DevTools',
+                click: function() {
+                    if (mainWindow) {
+                        mainWindow.toggleDevTools();
+                    }
+                }
+            });
+        }
+
+        contextMenuTemplate.push({
+            label: 'DevTools',
+            click: function() {
+                if (mainWindow) {
+                    var req = { cmd: 'debug', args: [config.settings.cms + '/prt/inview.html?services=' + config.settings.webService] };
+                    mainWindow.webContents.send('request', JSON.stringify(req));
+                }
+            }
+        });
+
+        contextMenuTemplate.push({
+            label: 'Clear Cache',
+            click: function() {
+                if (mainWindow) {
+                    mainWindow.webContents.session.clearCache(function() {
+                        mainWindow.webContents.reloadIgnoringCache();
+                    });
+                }
+            }
+        });
+
+        contextMenuTemplate.push({
+            label: 'Logout',
+            click: logout
+        });
+
+        contextMenuTemplate.push({
+            label: 'Exit',
+            click: playerExit
+        });
+
+        const contextMenu = electron.Menu.buildFromTemplate(contextMenuTemplate);
+
+        appIcon.setContextMenu(contextMenu);
+
+        appIcon.setToolTip("KORBYT™ INVIEW");
+
+        setApplicationMenu(null);
+    }
+
+    var lastAlert = 0;
+    var lastAlertFile;
+
+    function notifyClickHandler(event) {
+        //console.info('notification clicked');
+        event.closeNotification();
+    }
+
+    function checkForAlerts() {
+        if (lastAlertFile === undefined) {
+            lastAlertFile = path.join(electron.app.getPath('userData'), 'lastAlert.txt');
+            if (fs.exists(lastAlertFile)) {
+                var ws = fs.read(lastAlertFile, 'utf-8');
+                lastAlert = parseInt(ws);
+            }
+        }
+
+        if (!loginDetails) {
+            // not logged in
+            return;
+        }
+
+        var uri = config.settings.webService + '/v1/alerts?iid=' + loginDetails.id + '&last=' + lastAlert;
+        console.info(uri);
+        request(uri, function(err, response, results) {
+            if (err) {
+                console.error('Unable to poll for alerts: ' + err);
+                return;
+            }
+            var alerts = JSON.parse(results);
+            for (var a = 0; a < alerts.length; a++) {
+                var alert = alerts[a];
+                alert.id = +alert.id; // Make sure it is an number
+                if (alert.id > lastAlert) {
+                    lastAlert = alert.id;
+                    fs.write(lastAlertFile, lastAlert.toString(), 'utf-8');
+                }
+                eNotify.notify({
+                    title: 'InView Notification',
+                    text: `${alert.message}`,
+                    onClickFunc: notifyClickHandler
+                });
+            }
+        });
+    }
+
+    function playerExit() {
+        {
+            if (player) {
+                player.stop();
+                player = undefined;
+            }
+            appIcon.destroy();
+            if (loginWindow) {
+                loginWindow.destroy();
+                loginWindow = undefined;
+            }
+
+            if (mainWindow) {
+                var bounds = mainWindow.getBounds();
+                var lastPositionFile = path.join(electron.app.getPath('userData'), 'lastposition.json');
+                console.info("Saving " + lastPositionFile);
+                fs.write(lastPositionFile, JSON.stringify(bounds), 'utf-8');
+                mainWindow.destroy();
+                mainWindow = undefined;
+            }
+
+            if (demoTimer) {
+                clearInterval(demoTimer);
+                demoTimer = undefined;
+            }
+
+            if (eNotify) {
+                eNotify.closeAll();
+                eNotify = undefined;
+            }
+        }
+    }
+
+    function logout() {
+        var uri = config.settings.webService + '/v1/logout';
+        console.info(uri);
+        var options = {
+            url: uri,
+            headers: { Authorization: 'Bearer ' + loginDetails.accessToken }
+        };
+        request(options, function(err, response, results) {
+            if (err) {
+                console.error('Unable to poll for logout: ' + err);
+                return;
+            }
+            console.info(JSON.stringify(results));
+            console.info("Logged out");
+            playerExit();
+        });
+    }
+
+    // function doNotification() {
+    //     var samples = [
+    //         "Notification Title|Body text, can also contain URL, sound and 2nd icon",
+    //         "Weather Alert|Tornado Warning, seek shelter immediately",
+    //         "Threshold Exceeded|CIQ(20) > 15",
+    //         "Meeting|Daily standup begins in 15 minutes",
+    //         "Albert Einstein|Insanity: doing the same thing over and over again and expecting different results",
+    //         "Albert Einstein|We cannot solve our problems with the same thinking we used when we created them",
+    //         "Bored?|Eric sure can drone on and on"
+    //     ];
+
+    //     var parts = samples[notificationIndex].split('|');
+    //     notificationIndex = (notificationIndex + 1) % samples.length;
+    //     eNotify.notify({ title: parts[0], text: parts[1] });
+    // }
+
+}());
+//# sourceMappingURL=background.js.map

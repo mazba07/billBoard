@@ -1,0 +1,6 @@
+{
+    "name": "development",
+    "description": "Add here any environment specific stuff you like.",
+    "provisioningx": "http://v2.maestro.rmg.local:8085/ws",
+    "provisioning": "https://korbytdev.com/ws"
+}

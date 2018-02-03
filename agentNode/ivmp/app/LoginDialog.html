@@ -1,0 +1,45 @@
+<html>
+
+<head>
+    <title>InView Login</title>
+    <SCRIPT LANGUAGE="JavaScript">
+        const {
+            ipcRenderer
+        } = require('electron')
+
+        function process(form) {
+            if ((form.username.value.toLowerCase() == "eric.meyer") && (form.password.value == "abc123")) {
+                var results = {
+                    username: form.username.value,
+                    password: form.password.value
+                };
+
+                ipcRenderer.send("loginresults", JSON.stringify(results));
+            }
+        }
+    </SCRIPT>
+</head>
+
+<body>
+    <form name="loginform">
+        <table>
+            <tr>
+                <td colspan="2"><img src="InViewSplash-120.png" width='230' height='60'></td>
+            </tr>
+            <tr>
+                <td>User Name:</td>
+                <td><input type="text" name="username"></td>
+            </tr>
+            <tr>
+                <td>Password:</td>
+                <td><input type="password" name="password"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td align='right'><button name="cancel" onclick='ipcRenderer.send("loginresults", "Canceled");'>Cancel</button> <button name="submit" onclick="process(this.form);">Submit</button></td>
+            </tr>
+        </table>
+    </form>
+</body>
+
+</html>

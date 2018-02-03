@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<!-- 
+-- Displays a logged in users alert messages
+-- Author: Eric Meyer
+!-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="60">
+    <title>KORBYT&trade; INVIEW</title>
+    <h1 style='text-align: center;'>My Alerts History</h1>
+    <meta name="viewport" content="width=device-width">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script src="jquery.js" onload="window.$ = window.jQuery = module.exports;"></script>
+    <script src="moment.min.js"></script>
+    <script src="PlayerHelper.js"></script>
+
+    <style>
+        table {
+            border-spacing: 10px;
+            border-collapse: separate;
+        }
+        
+        td {
+            padding: 10px;
+            vertical-align: top;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            var services = getServices();
+            var loginDetails = getLoginDetails();
+
+            $.ajax({
+                url: services + "/v1/alerts?iid=" + loginDetails.id + '&last=0',
+                headers: getHeaders(),
+                success: function(data) {
+                    if (data.length > 0) {
+                        var html = '<table>';
+                        for (var i = 0; i < data.length; i++) {
+                            var a = data[i];
+                            var sent = moment(a.sent);
+                            html += '<tr><td style="white-space: nowrap; text-align: center;"><b>' + sent.format('YYYY-MM-DD') + '<br>' + sent.format('hh:mm:ss') + '</b></td><td>' + a.message + '</td></tr>';
+                        }
+                        html += '</table>';
+                        $('#layoutroot').html(html);
+                    } else {
+                        $('#layoutroot').html('<h3 style="text-align: center;">You have never received an alert message.</h3>');
+                    }
+                },
+                error: function(err) {
+                    console.error("Error - " + JSON.stringify(err));
+                },
+                type: "GET",
+                dataType: "json"
+            });
+
+        });
+    </script>
+    <div id="layoutroot">
+
+
+    </div>
+    <div id="annotation">
+    </div>
+</body>
+
+</html>

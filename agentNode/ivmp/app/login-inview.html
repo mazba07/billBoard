@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<!-- 
+-- Base Player Document for InView
+-- Author: Eric Meyer
+!-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>KORBYT&trade; INVIEW</title>
+    <meta name="viewport" content="width=device-width">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script src="jquery.js" onload="window.$ = window.jQuery = module.exports;"></script>
+    <script src="PlayerHelper.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0
+        }
+        
+        body {
+            font-family: Roboto, "Century Gothic", Arial;
+            background: #F8F8F8;
+        }
+        /*Login Styles*/
+        
+        .loginOuter {
+            height: 90vh;
+            width: 90vw;
+            position: relative;
+        }
+        
+        #loginMod {
+            width: 100%;
+            height: 100%;
+            background: #F8F8F8;
+            position: absolute;
+            top: 5%;
+            transform: translate(0%, 0%);
+            left: 5%;
+            overflow: hidden
+        }
+        
+        #loginMod .loginInner {
+            margin: 70px 20px 0
+        }
+        
+        #loginMod .btns {
+            position: absolute;
+            margin-top: 17px;
+            width: 100%;
+            color: #fff;
+            text-align: center;
+            height: 12vmin;
+            line-height: 12vmin;
+            font-size: 6vmin;
+            text-decoration: none;
+            text-shadow: 1px 0 1px #000
+        }
+        
+        #loginMod .forgot {
+            color: #c9004f;
+            text-decoration: none;
+            margin-top: .1vmin;
+            display: inline-block;
+            /*float: right;*/
+            margin-right: 2vmin;
+            font-size: 3vmin;
+        }
+        
+        #loginMod .error {
+            color: #c90000;
+            text-decoration: none;
+            margin-top: .1vmin;
+            display: inline-block;
+            margin-right: 2vmin;
+            font-size: 3.5vmin;
+        }
+        
+        #loginMod .forgot:hover {
+            color: #f00d47;
+        }
+        
+        #loginMod .submitLogin {
+            background: #0093b1;
+            right: 0;
+        }
+        
+        #loginMod .submitLogin:disabled {
+            opacity: .5;
+            color: #aaa;
+            right: 0;
+        }
+        
+        #loginMod .btns:active {
+            opacity: .8;
+            font-size: 5vmin;
+            background: #00688f;
+        }
+        
+        #loginMod .btns:hover {
+            opacity: .8;
+        }
+        
+        #loginMod .loginInner label {
+            display: block;
+            font-size: 6vmin;
+            /*vertical-align: middle;*/
+            letter-spacing: .1vmin;
+            margin-right: 2vmin;
+        }
+        
+        #loginMod .loginInner input[type=text],
+        #loginMod .loginInner input[type=password] {
+            font-size: 6vmin;
+            width: 96%;
+            margin-top: 1vmin;
+            padding: 3px 1%
+        }
+        
+        .row {
+            margin-bottom: 17px
+        }
+        
+        #loginMod .loginInner .checkboxLbl {
+            display: inline;
+            font-size: 4vmin;
+            margin-left: 1vmin
+        }
+        
+        .loginOuter .logo {
+            position: absolute;
+            right: 4vmin;
+            top: 1vmin;
+        }
+        
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="text/javascript">
+        var ipcRenderer = require('electron').ipcRenderer;
+        var playerDoc;
+
+        var args = getParametersFromUrl();
+
+        var config = {};
+        config.settings = {};
+        config.settings.cms = args['cms'];
+        config.settings.webService = args['webService'];
+        config.settings.tenant_token = args['tenant_token'];
+
+        console.info(JSON.stringify(config));
+
+        function getLoginUrl() {
+            return config.settings.webService + '/v1/login';
+        }
+
+        function login() {
+            var loginURL = getLoginUrl();
+            console.log(loginURL);
+            var request = {
+                type: 'POST',
+                url: loginURL,
+                data: $('#loginForm').serialize()
+            };
+
+            console.info(JSON.stringify(request));
+
+            $.ajax(request).done(function(data) {
+                console.info("Login returned: " + JSON.stringify(data));
+                localStorage.setItem('loginDetails', JSON.stringify(data.loginDetails));
+                localStorage.setItem('userDetails', JSON.stringify(data.userDetails));
+                if (data.dataSettings) {
+                    localStorage.setItem('dataSettings', JSON.stringify(data.dataSettings));
+                }
+                ipcRenderer.send("loginResults", JSON.stringify(data));
+            }).fail(function(err) {
+                console.info("Login returned: " + JSON.stringify(err));
+                $('#submitbtn').removeAttr('disabled');
+                var status = 500;
+                var statusText = 'Unknown error';
+                if (err.responseJSON) {
+                    if (err.responseJSON.status) {
+                        status = err.responseJSON.status
+                    }
+                    if (err.responseJSON.error) {
+                        statusText = err.responseJSON.error;
+                    }
+                }
+                $('#errmsg').html(`Unable to login: ${status} - ${statusText}`);
+            });
+        }
+
+        function validateEmail(email) {
+            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
+        }
+
+        $(document).ready(function() {
+            var args = getParametersFromUrl();
+
+            $('#tenant_token').val(config.settings.tenant_token);
+
+            console.info("Checking login status.");
+            var loginDetails = getLoginDetails();
+            if (loginDetails != undefined) {
+                console.info(JSON.stringify(loginDetails));
+            }
+
+            if (loginDetails.rememberUser || loginDetails.stayLoggedIn) {
+                $('#username').val(loginDetails.email);
+            }
+
+            $('#rememberUser').prop('checked', loginDetails.rememberUser);
+            $('#stayLoggedIn').prop('checked', loginDetails.stayLoggedIn);
+
+            $('#forgotpassword').on('click', function() {
+                var username = $('#username').val();
+                if (!username || !validateEmail(username)) {
+                    $('#errmsg').html(`You must enter a valid email address first`);
+                    return;
+                }
+
+                console.log(config.settings);
+
+                var uri = config.settings.webService + '/v1/passwordreset';
+                uri += `?username=${username}&tenant_token=${config.settings.tenant_token}`;
+                uri += `&cms=${config.settings.cms}&webService=${config.settings.webService}`;
+
+                console.info('fixed: ' + uri);
+
+                $.ajax({
+                    type: 'get',
+                    url: uri
+                }).done(function(data) {
+                    $('#errmsg').html(`Password reset email has been requested.`);
+                }).fail(function(err) {
+                    console.log(err);
+                    $('#errmsg').html(`Request failed`);
+                });
+            });
+
+            if (loginDetails.stayLoggedIn && loginDetails.rememberToken) {
+                var loginURL = getLoginUrl();
+                var o = {};
+
+                o.tenant_token = config.settings.tenant_token;
+                o.username = loginDetails.email;
+                o.rememberToken = loginDetails.rememberToken;
+
+                console.info(JSON.stringify(o));
+                $.ajax({
+                    type: 'get',
+                    url: loginURL + '?rt=' + UrlSafeBase64.encode(JSON.stringify(o))
+                }).done(function(data) {
+                    console.info('Logged in');
+                    localStorage.setItem('loginDetails', JSON.stringify(data.loginDetails));
+                    localStorage.setItem('userDetails', JSON.stringify(data.userDetails));
+                    if (data.dataSettings) {
+                        localStorage.setItem('dataSettings', JSON.stringify(data.dataSettings));
+                    }
+                    ipcRenderer.send("loginResults", JSON.stringify(data));
+                }).fail(function(err) {
+                    console.info("Unable to login automatically: " + JSON.stringify(err));
+
+                    console.info("show the login form.");
+                    $('#loginForm').removeClass('hide');
+                    if (loginDetails.rememberUser) {
+                        $('#username').val(loginDetails.email);
+                    } else {
+                        $('#username').val('');
+                    }
+
+                    $('#rememberUser').prop('checked', loginDetails.rememberUser);
+                    $('#stayLoggedIn').prop('checked', loginDetails.stayLoggedIn);
+                    $('#loginForm').on('submit', function(e) {
+                        login();
+                        e.preventDefault();
+                        return true;
+                    });
+                });
+            } else {
+                console.info("show the login form.");
+                if (loginDetails.rememberUser) {
+                    $('#username').val(loginDetails.email);
+                } else {
+                    $('#username').val('');
+                }
+                $('#loginForm').removeClass('hide');
+                $('#loginForm').on('submit', function(e) {
+                    $('#submitbtn').attr('disabled', 'disabled');
+                    login();
+                    e.preventDefault();
+                    return true;
+                });
+            }
+        });
+    </script>
+    <form id="loginForm" class="hide">
+        <div class="loginOuter">
+            <div id="loginMod"> <img src="inview-logo.png" class="logo">
+                <div class="loginInner">
+                    <div class="row">
+                        <!--Temporary Token Value for testing-->
+                        <input type="hidden" id="tenant_token" name="tenant_token" value="">
+                        <label for="username">Email</label>
+                        <input type="text" id="username" name="username">
+                    </div>
+                    <div class="row">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password">
+                        <input type="hidden" id="rememberToken" name="rememberToken">
+                    </div>
+                    <div class="row">
+                        <input type="checkbox" id="rememberUser" name="rememberUser">
+                        <label for="rememberUser" class="checkboxLbl">Remember email</label>
+                    </div>
+                    <div class="row">
+                        <input type="checkbox" id="stayLoggedIn" name="stayLoggedIn">
+                        <label for="stayLoggedIn" class="checkboxLbl">Login automatically</label>
+                        <a id='forgotpassword' class="forgot" href='#'>Forgot password?</a>
+                    </div>
+                    <div class="row">
+                        <div id="errmsg" class="error"></div>
+                    </div>
+                </div>
+                <button id="submitbtn" type='submit' class='btns submitLogin' value='Login'>Submit</button>
+            </div>
+        </div>
+    </form>
+</body>
+
+</html>
