@@ -1,0 +1,28 @@
+{
+"server":"Testing",
+"welcomeScreen":"http://google.com",
+"setupScreen":"http://google.com/",
+"playlist":
+[
+	{"id":"1000","uri":"http://rmgnetworks.com/","rule":"10sec"},
+	{"id":"1020","uri":"http://rmgnetworks.com/financial-services-digital-signage/","rule":"5sec"},
+	{"id":"1000","uri":"http://rmgnetworks.com/retail-signage/","rule":"5sec"}
+],
+"displays":
+[
+	{"resolution":"1920x1200","screenOrientation":"normal", "displayMode":"playlist"}
+],
+"accessPoint": 
+{
+	"ssid":"RMG",
+	"username":"Martin.Johnsson@rmgnetworks.com",
+	"password":"Sparten118",
+	"mode":"client"
+},
+"volume":"10",
+"disableMouse":"false",
+"sleepTime":"20:54",
+"wakeupTime":"20:55",
+"screenshotRate":"1",
+"screenshotQuality":"40"
+}

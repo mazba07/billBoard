@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Player Configuration</title>
+
+<!-- Bootstrap -->
+<link href="bootstrap.css" rel="stylesheet">
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+<form action="" method="post" enctype="multipart/form-data">
+<style>
+body {
+	font-family: "Century Gothic", Arial
+}
+.well {
+	position: relative;
+	padding-top: 60px
+}
+.well h4 {
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 10px;
+	margin: 0;
+	background: #24ACE7;
+	width: 100%;
+	color: #fff
+}
+.well hr {
+	margin: 10px 0 0;
+	border: none
+}
+label {
+	display: inline-block;
+	width: 170px;
+}
+input {
+	margin-right: 10px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="row">
+  <div class="col-md-12">
+    <h1 class="text-center">PLAYER CONFIGURATION</h1>
+    <hr>
+  </div>
+</div>
+<div class="row text-center">
+  <div class="col-md-6 col-md-offset-3">
+    <label for="playerName">Player Name:</label>
+    <input type="text" id="playerName" name="playerName" value="">
+  </div>
+</div>
+<hr>
+<div class="row">
+  <div class="col-sm-6">
+    <div class="col-sm-12">
+      <div class="well">
+        <h4>LOGGING SETTINGS</h4>
+        <label for="logLevel">log level:</label>
+        <select name="logLevel">
+          <!-- logLevel -->
+        </select>
+        <a href='/download'> Download Me! </a>
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <div class="well">
+        <h4>SERVER COMMUNICATIONS</h4>
+        <label for="serverIP">webserver IP: </label>
+        <input type="text" size="22" id="serverIP" name="serverIP" value="">
+        port:
+        <input type="text" size="5" id="serverPort" name="serverPort" value="">
+        <hr>
+        <label for="contentIP">content server IP:</label>
+        <input type="text" size="22" id="contentIP" name="contentIP" value="">
+        <hr>
+        <label for="hbPeriod">send heartbeat every </label>
+        <input type="number" id="hbPeriod" min="1" style="width:60px" name="hbPeriod" value="">
+        <label>minute(s)</label>
+        <hr>
+        <label for="cPeriod">send checkin every </label>
+        <input type="number" id="cPeriod" min="1" style="width:60px" name="cPeriod" value="">
+        <label>minute(s)</label>
+        <hr>
+        <label for="sPeriod">send screencap every</label>
+        <input type="number" id="sPeriod" min="1" style="width:60px" name="sPeriod" value="">
+        <label>minute(s)</label>
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <div class="well">
+        <h4>WIFI SETTTINGS</h4>
+        <label for="mode">mode:</label>
+        <select name="mode" onchange="showDiv(this)">
+          <option value="client">client</option>
+          <option selected="adhoc">adhoc</option>
+        </select>
+        <div style="display: none" id="adhocDiv">
+          <hr>
+          <label for="ssid">SSID:</label>
+          <input type="text" id="ssid" name="ssid" value="">
+        </div>
+        <hr>
+        <label for="wifiList">select network:</label>
+        <select id="wifiList" name="wifiList" onchange="setSecurity(this)">
+          <!--wifiList-->
+        </select>
+        <br>
+	<input hidden type="text" id="security" name="security" value="">
+        <script>
+	function showDiv(obj) {
+    	  var selectBox = obj;
+    	  var selected = selectBox.options[selectBox.selectedIndex].value;
+    	  var adhoc = document.getElementById("adhocDiv");
+	  var client = document.getElementById("wifiList");
+    	  if(selected === 'adhoc'){
+            adhoc.style.display = "inline";
+	    client.style.display = "none";
+    	  }
+    	  else{
+            adhoc.style.display = "none";
+	    client.style.display = "inline";
+    	  }
+	}
+	function setSecurity(sel) {
+	  var security = document.getElementById("security");
+          security.value = sel.options[sel.selectedIndex].text;
+	}
+	window.onload = function() {
+   	  setSecurity(document.getElementById("wifiList"));
+	}
+	</script>
+        <hr>
+        <br>
+        <label for="username">username:</label>
+        <input type="text" id="username" name="username" value="" style="width:250px">
+        <hr>
+        <label for="password">password:</label>
+        <input type="password" id="password" name="password" value="">
+      </div>
+    </div>
+    
+  </div>
+  <div class="col-sm-6">
+    <div class="col-sm-12">
+      <div class="well">
+        <h4>SLEEP SCHEDULE</h4>
+        <label for="sleepTime">sleep time:</label>
+        <input type="time" id="sleepTime" name="sleepTime" value="00:00">
+        <hr>
+        <label for="wakeupTime">wake time:</label>
+        <input type="time" id="wakeupTime" name="wakeupTime" value="00:00">
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <div class="well">
+        <h4>DISPLAY SETTINGS</h4>
+        <!--resolution-->
+
+	<!--orientation-->
+        <hr>
+        <label for="disableMouse"></label>
+        <input type="checkbox" name="disableMouse" value="true" checked="DM">
+        Disable Mouse Cursor </div>
+    </div>
+    <div class="col-sm-12">
+      <div class="well clearfix">
+        <h4>VOLUME</strong></h4>
+        <div class="col-sm-8 text-center"><span class="pull-left">0%</span><span class="pull-right">100%</span>
+          <label for="volume"></label>
+          <input type="range" id="volume" min="0" max="100" name="volume" value="">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <hr>
+    <button type="submit" class="btn btn-success btn-lg pull-right">Submit</button>
+  </div>
+</div>
+</form>
+</body>
+</html>

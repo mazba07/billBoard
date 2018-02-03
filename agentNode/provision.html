@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Player Provisioning</title>
+<style>
+* {padding: 0; margin: 0; outline: none}
+body {background: #fff; font-family: Arial, "Century Gothic";}
+.pageOuter {margin: 0px auto; height: 100vh; overflow: hidden; background: #f7fbfc; border-top: 0; border-bottom: 0;}
+header {width: 100%; min-width: 1020px; height: 80px; background: #25b5f5; background: linear-gradient(to right, #25b5f5 0%, #876af0 100%);}
+header .logo {height: 80px; width: 280px; background: url(logo.png) center center no-repeat; position: relative;}
+section {width: 1020px; margin: 20px auto;}
+section h1 {font-size: 20px; color: #748a96; text-transform: uppercase; margin: 20px 0; font-weight: normal;}
+.playerCard {border: 1px solid #c1c1c1; box-shadow: 0 3px 20px #e8e8e8; border-radius: 5px; background: #fff; width: 100%; margin-right: 3%; display: inline-block; vertical-align: top; padding: 10px 0;}
+.content {margin: 10px; line-height: 1.5em}
+.content p{margin:30px;}
+.token{text-align:center; font-size:32px; padding:30px; margin:30px auto: width:80%; border:1px solid #ccc; border-left:none; border-right:none}
+
+
+</style>
+</head>
+
+<body>
+<div class="pageOuter">
+  <header>
+    <div class="logo"></div>
+  </header>
+  <section>
+    <h1>Player Provisioning</h1>
+    <div class="playerCard">
+      <div class="content">
+   
+        <p>This player must be provisioned to work with Korbyt cloud services. Please login to
+	
+	<a href="<url>"><url></a> 
+	 and enter the following token: </p>
+	
+	<div class="token">
+        <!-- token --> 
+	</div>
+   	<p>
+	Otherwise configure manually by going to 
+	<a href="http://localhost:50001"><playername>:50001</a> and entering server/tenant information</p> 
+    </div>
+  </section>
+</div>
+</body>
+</html>

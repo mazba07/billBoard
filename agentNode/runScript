@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo apt-get install libxss1 libappindicator1 libindicator7 && chromec=`ls -1 google-chrome*.deb 2>/dev/null | wc -l` && if [[ $chromec == 0 ]]; then sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && sudo dpkg -i google-chrome*.deb; fi && nodec=`node -v 2>/dev/null | wc -l` && if [[ $nodec == 0 ]]; then wget -qO- https://deb.nodesource.com/setup_7.x | sudo bash - && sudo apt-get install -y nodejs; fi && sudo apt-get install scrot && /usr/bin/node app.js

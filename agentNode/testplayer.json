@@ -1,0 +1,413 @@
+{
+  "id": 38,
+  "name": "Dallas HQ 001   ",
+  "description": "new description",
+  "status": "Active",
+  "tags": "new tags",
+  "updated": "2016-09-09T00:00:00.000Z",
+  "playlists": [
+    {
+      "id": 87,
+      "name": "test javed playlist 22nov v3",
+      "description": "test des",
+      "status": "Pending",
+      "tags": "test tag",
+      "playtimes": [],
+      "items": [
+        {
+          "id": 50,
+          "name": "Lobby Welcome v2",
+          "tags": "Lobby Welcome",
+          "uri": "http://13.84.42.133/lobby-welcome-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 51,
+          "name": "DC Dashboard",
+          "tags": "DC Dashboard",
+          "uri": "http://13.84.42.133/dc-dashboard-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 52,
+          "name": "Fall Sale",
+          "tags": "Fall Sale",
+          "uri": "http://13.84.42.133/fall-sale-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 58,
+          "name": "Spring Sale",
+          "tags": "retail, spring, fashion",
+          "uri": "http://13.84.42.133/screen/spring-sale/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 65,
+          "name": "Sales Prsentation",
+          "tags": "sales, presentation, 2016",
+          "uri": "http://13.84.42.133/screen/sales-prsentation/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "name": "Q4 Corp v2",
+      "description": "Includes Welcome, Weather, Clock, News and Announcements",
+      "status": "Active",
+      "tags": "",
+      "playtimes": [
+        {
+          "id": 6,
+          "type": 0,
+          "start": "0000-00-00",
+          "end": "0000-00-00",
+          "from": "00:00:00",
+          "to": "00:00:00",
+          "days": ""
+        },
+        {
+          "id": 9,
+          "type": 0,
+          "start": "0000-00-00",
+          "end": "0000-00-00",
+          "from": "00:00:00",
+          "to": "00:00:00",
+          "days": ""
+        },
+        {
+          "id": 12,
+          "type": 1,
+          "start": "1212-12-12T00:00:00.000Z",
+          "end": "1212-12-12T00:00:00.000Z",
+          "from": "00:12:00",
+          "to": "00:12:00",
+          "days": "01"
+        },
+        {
+          "id": 25,
+          "type": 1,
+          "start": "2016-12-14T00:00:00.000Z",
+          "end": "2016-12-11T00:00:00.000Z",
+          "from": "09:53:00",
+          "to": "09:53:00",
+          "days": "12356"
+        }
+      ],
+      "items": [
+        {
+          "id": 50,
+          "name": "Lobby Welcome v2",
+          "tags": "Lobby Welcome",
+          "uri": "http://13.84.42.133/lobby-welcome-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 51,
+          "name": "DC Dashboard",
+          "tags": "DC Dashboard",
+          "uri": "http://13.84.42.133/dc-dashboard-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 52,
+          "name": "Fall Sale",
+          "tags": "Fall Sale",
+          "uri": "http://13.84.42.133/fall-sale-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 58,
+          "name": "Spring Sale",
+          "tags": "retail, spring, fashion",
+          "uri": "http://13.84.42.133/screen/spring-sale/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 65,
+          "name": "Sales Prsentation",
+          "tags": "sales, presentation, 2016",
+          "uri": "http://13.84.42.133/screen/sales-prsentation/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        }
+      ]
+    },
+    {
+      "id": 105,
+      "name": "SimomPlaylist",
+      "description": "Playlist Description",
+      "status": "",
+      "tags": "Lobby, Dashboard, Employee Comm, Product Demo",
+      "playtimes": [],
+      "items": [
+        {
+          "id": 50,
+          "name": "Lobby Welcome v2",
+          "tags": "Lobby Welcome",
+          "uri": "http://13.84.42.133/lobby-welcome-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 51,
+          "name": "DC Dashboard",
+          "tags": "DC Dashboard",
+          "uri": "http://13.84.42.133/dc-dashboard-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 52,
+          "name": "Fall Sale",
+          "tags": "Fall Sale",
+          "uri": "http://13.84.42.133/fall-sale-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 58,
+          "name": "Spring Sale",
+          "tags": "retail, spring, fashion",
+          "uri": "http://13.84.42.133/screen/spring-sale/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 65,
+          "name": "Sales Prsentation",
+          "tags": "sales, presentation, 2016",
+          "uri": "http://13.84.42.133/screen/sales-prsentation/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        }
+      ]
+    },
+    {
+      "id": 110,
+      "name": "Eric Test",
+      "description": "Playlist Description",
+      "status": "",
+      "tags": "Lobby, Dashboard, Employee Comm, Product Demo",
+      "playtimes": [
+        {
+          "id": 14,
+          "type": 1,
+          "start": "0000-00-00",
+          "end": "2016-12-31T00:00:00.000Z",
+          "from": "00:00:00",
+          "to": "00:00:00",
+          "days": ""
+        },
+        {
+          "id": 15,
+          "type": 1,
+          "start": "0000-00-00",
+          "end": "0000-00-00",
+          "from": "00:00:00",
+          "to": "00:00:00",
+          "days": "3"
+        },
+        {
+          "id": 16,
+          "type": 1,
+          "start": "0000-00-00",
+          "end": "0000-00-00",
+          "from": "06:30:00",
+          "to": "18:00:00",
+          "days": "123456"
+        }
+      ],
+      "items": [
+        {
+          "id": 50,
+          "name": "Lobby Welcome v2",
+          "tags": "Lobby Welcome",
+          "uri": "http://13.84.42.133/lobby-welcome-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 51,
+          "name": "DC Dashboard",
+          "tags": "DC Dashboard",
+          "uri": "http://13.84.42.133/dc-dashboard-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 52,
+          "name": "Fall Sale",
+          "tags": "Fall Sale",
+          "uri": "http://13.84.42.133/fall-sale-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 58,
+          "name": "Spring Sale",
+          "tags": "retail, spring, fashion",
+          "uri": "http://13.84.42.133/screen/spring-sale/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 65,
+          "name": "Sales Prsentation",
+          "tags": "sales, presentation, 2016",
+          "uri": "http://13.84.42.133/screen/sales-prsentation/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "name": "Q4 Lobby",
+      "description": "Includes Welcome, Weather, Clock, News and Announcements",
+      "status": "Active",
+      "tags": "my Tag",
+      "playtimes": [
+        {
+          "id": 4,
+          "type": 0,
+          "start": "0000-00-00",
+          "end": "0000-00-00",
+          "from": "00:00:00",
+          "to": "00:00:00",
+          "days": ""
+        },
+        {
+          "id": 5,
+          "type": 0,
+          "start": "0000-00-00",
+          "end": "0000-00-00",
+          "from": "00:00:00",
+          "to": "00:00:00",
+          "days": ""
+        },
+        {
+          "id": 18,
+          "type": 1,
+          "start": "2016-12-07T00:00:00.000Z",
+          "end": "2016-12-18T00:00:00.000Z",
+          "from": "06:15:00",
+          "to": "12:15:00",
+          "days": "0126"
+        }
+      ],
+      "items": [
+        {
+          "id": 50,
+          "name": "Lobby Welcome v2",
+          "tags": "Lobby Welcome",
+          "uri": "http://13.84.42.133/lobby-welcome-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 51,
+          "name": "DC Dashboard",
+          "tags": "DC Dashboard",
+          "uri": "http://13.84.42.133/dc-dashboard-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 52,
+          "name": "Fall Sale",
+          "tags": "Fall Sale",
+          "uri": "http://13.84.42.133/fall-sale-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 58,
+          "name": "Spring Sale",
+          "tags": "retail, spring, fashion",
+          "uri": "http://13.84.42.133/screen/spring-sale/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 65,
+          "name": "Sales Prsentation",
+          "tags": "sales, presentation, 2016",
+          "uri": "http://13.84.42.133/screen/sales-prsentation/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        }
+      ]
+    },
+    {
+      "id": 112,
+      "name": "Eric Test2",
+      "description": "Second playlist",
+      "status": "",
+      "tags": "Lobby, Dashboard, Employee Comm, Product Demo",
+      "playtimes": [
+        {
+          "id": 17,
+          "type": 1,
+          "start": "0000-00-00",
+          "end": "0000-00-00",
+          "from": "00:00:00",
+          "to": "00:00:00",
+          "days": "06"
+        }
+      ],
+      "items": [
+        {
+          "id": 50,
+          "name": "Lobby Welcome v2",
+          "tags": "Lobby Welcome",
+          "uri": "http://13.84.42.133/lobby-welcome-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 51,
+          "name": "DC Dashboard",
+          "tags": "DC Dashboard",
+          "uri": "http://13.84.42.133/dc-dashboard-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 52,
+          "name": "Fall Sale",
+          "tags": "Fall Sale",
+          "uri": "http://13.84.42.133/fall-sale-2/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 58,
+          "name": "Spring Sale",
+          "tags": "retail, spring, fashion",
+          "uri": "http://13.84.42.133/screen/spring-sale/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        },
+        {
+          "id": 65,
+          "name": "Sales Prsentation",
+          "tags": "sales, presentation, 2016",
+          "uri": "http://13.84.42.133/screen/sales-prsentation/",
+          "runtime": 15,
+          "animation": "Fade In Left Big"
+        }
+      ]
+    }
+  ]
+}

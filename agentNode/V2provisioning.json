@@ -1,0 +1,4 @@
+{
+	"provisioningUI": "http://v2.maestro.rmg.local:8085/players",
+	"provisioingWS": "http://v2.maestro.rmg.local:8085/ws"
+}

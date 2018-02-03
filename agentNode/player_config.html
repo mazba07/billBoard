@@ -1,0 +1,223 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="61">
+<title>Player Configuration</title>
+
+<style>
+* {padding: 0; margin: 0; outline: none}
+body {background: #fff; font-family: Arial, "Century Gothic";}
+.pageOuter {margin: 0px auto; height: 100vh; background: #f7fbfc; border-top: 0; border-bottom: 0;}
+header {width: 100%; min-width: 1020px; height: 80px; background: #25b5f5; background: linear-gradient(to right, #25b5f5 0%, #876af0 100%);}
+header .logo {height: 80px; width: 280px; background: url(logo.png) center center no-repeat; position: relative;}
+section {width: 1020px; margin: 20px auto;}
+section h1 {font-size: 20px; color: #748a96; text-transform: uppercase; margin: 20px 0; font-weight: normal;}
+.playerCard {border: 1px solid #c1c1c1; box-shadow: 0 3px 20px #e8e8e8; border-radius: 5px; background: #fff; width: 46.5%; margin-right: 3%; display: inline-block; vertical-align: top; padding: 10px 0;}
+.playerCard .row {margin: 10px 0;}
+.playerCard h3 {font-size: 16px; color: #748a96; font-weight: normal; box-sizing: border-box; text-transform: uppercase; margin: 10px 10px 20px;}
+.content {margin: 10px; line-height: 1.5em}
+.content label {display: inline-block; width: 40%; font-size: 11pt; color: #919da8; text-transform: uppercase;}
+.content .btnSmall {color: #fff; display: inline-block; background: #5e89f2; font-size: 12px; text-decoration: none; padding: 3px 10px; border-radius: 3px; margin: 0 5px}
+select {min-width: 135px; margin-right: 10px; padding: 3px 10px; border-radius: 5px; color: #748a96; background: #fff; border: 2px solid #8f9ba6; line-height: 1; height: 30px; vertical-align: middle; width: 248px; font-size: 14px;}
+input, textarea {margin: 0; padding: 5px 10px 6px; border-radius: 5px; color: #748a96; background: #fff; border: 2px solid #8f9ba6; line-height: 1; vertical-align: middle; width: 225px; font-size: 14px;}
+select.medFormElem, input.medFormElem {width: 120px; min-width: inherit}
+select.smallFormElem, input.smallFormElem {width: 60px; min-width: inherit; text-align: center}
+input[type="checkbox"] {width: inherit}
+input[type="range"] {padding: 0; border: none}
+.content h3 {margin-left: 0; margin-top: 20px;}
+hr {border: 1px dotted #ccc; border-width: 0 0 1px 0; height: 10px}
+.pageActionsContainer {margin-top: 10px; padding-top: 10px; border-top: 1px dotted #ccc; text-align: right}
+.primaryBtn, .primaryBtn:link, .primaryBtn:visited {background: #5e89f2; border-radius: 3px; border: none; box-shadow: 0px 0px 5px #a6a6a6; color: #fff; display: inline-block; font-size: 16px; line-height: 2em; margin: 5px 30px 5px 0; overflow: hidden; opacity: .9; padding: 5px 14px; position: relative; text-decoration: none; text-shadow: none; transition: all .2s; vertical-align: middle; min-width: 100px; text-align: center;}
+.primaryBtn:active {transform: translateY(2px);}
+.primaryBtn.small {font-size: 12px; min-width: 60px; padding: 2px 4px 2px; text-align: center;}
+.primaryBtn.cancel {background: #6d6f71;}
+.content .chkBoxLabel{width:45%; text-transform: none}
+input:focus, input.focus, textarea:focus, select:focus {
+    border-color: #5ccae8;
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+</head>
+
+<body>
+<form id="my_form" action="" method="post" enctype="multipart/form-data">
+<div class="pageOuter">
+  <header>
+    <div class="logo"></div>
+  </header>
+  <section>
+    <h1>Player Configuration</h1>
+    <div class="playerCard">
+      <div class="content">
+        <div class="row">
+          <label for="playerName">Player Name</label>
+          <input type="text" id="playerName" name="playerName" value="">
+        </div>
+        <hr>
+        <h3>Server Communications</h3>
+        <div class="row">
+          <label for="serverIP">webserver IP</label>
+          <input type="text" size="22" id="serverIP" name="serverIP" value="">
+        </div>
+        <div class="row">
+          <label for="contentIP">content server IP</label>
+          <input type="text" size="22" id="contentIP" name="contentIP" value="">
+        </div>
+	<div class="row">
+          <label for="tenantToken">tenant token</label>
+          <input type="text" size="22" id="tenantToken" name="tenantToken" value="">
+        </div>
+        <div class="row">
+          <label for="hbPeriod">send heartbeat every </label>
+          <input type="number" id="hbPeriod" min="1" class="smallFormElem" name="hbPeriod" value="">
+          minute(s) </div>
+        <div class="row">
+          <label for="cPeriod">send checkin every </label>
+          <input type="number" id="cPeriod" min="1"class="smallFormElem"  name="cPeriod" value="">
+          minute(s)</div>
+        <div class="row">
+          <label for="sPeriod">send screencap every</label>
+          <input type="number" id="sPeriod" min="1" class="smallFormElem"  name="sPeriod" value="">
+          minute(s) </div>
+	<div class="row">
+          <label for="screenshotWidth">screencap width</label>
+          <input type="number" id="screenshotWidth" min="1" class="smallFormElem" name="screenshotWidth" value="">
+        </div>
+	<div class="row">
+          <label for="screenshotQuality">screncap quality</label>
+          <input type="number" id="screenshotQuality" min="1" class="smallFormElem" name="screenshotQuality" value="">
+        </div>
+        <hr>
+        <h3>Wifi Settings</h3>
+        <div class="row">
+          <label for="mode">mode</label>
+          <select id="wifiSelect" name="mode" onchange="showDiv(this)">
+            <option selected="client">client</option>
+            <option value="adhoc">adhoc</option>
+          </select>
+        </div>
+        <div class="row">
+          <div id="adhocDiv" class="row">
+            <label for="ssid">SSID</label>
+            <input type="text" id="ssid" name="ssid" value="">
+          </div>
+          <div id="wifiList" class="row">
+            <label for="wifiList">select network</label>
+            <select id="wifiList" name="wifiList" onchange="setSecurity(this)">
+              <!--wifiList-->
+            </select>
+          </div>
+<script>
+	showDiv(document.getElementById("wifiSelect"));
+	function logout() {
+	   window.location.href = document.URL.replace("/form","")
+	}
+	function showDiv(obj) {
+    	  var selectBox = obj;
+    	  var selected = selectBox.options[selectBox.selectedIndex].value;
+    	  var adhoc = document.getElementById("adhocDiv");
+	  var client = document.getElementById("wifiList");
+    	  if(selected === 'adhoc'){
+            adhoc.style.display = "inline";
+	    client.style.display = "none";
+    	  }
+    	  else{
+            adhoc.style.display = "none";
+	    client.style.display = "inline";
+    	  }
+	}
+	function setSecurity(sel) {
+	  var security = document.getElementById("security");
+          security.value = sel.options[sel.selectedIndex].text;
+	}
+	window.onload = function() {
+   	  setSecurity(document.getElementById("wifiList"));
+	}
+	</script>
+          <div class="row">
+            <input hidden="" type="text" id="security" name="security" value="">
+            <label for="username">username</label>
+            <input type="text" id="username" name="username" value="">
+          </div>
+          <div class="row">
+            <label for="password">password</label>
+            <input type="password" id="password" name="password" value="">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="playerCard">
+      <div class="content">
+        <div class="row">
+          <label for="logLevel">Log level</label>
+          <select name="logLevel" class="medFormElem">
+            <!-- logLevel -->
+          </select>
+          <a href="/download" class="btnSmall"> Download</a></div>
+        <hr>
+        <div class="row">
+          <h3>Sleep Schedule</h3>
+          <label for="sleepTime">sleep time</label>
+          <input type="time" id="sleepTime" name="sleepTime" value="00:00" class="medFormElem">
+        </div>
+        <div class="row">
+          <label for="wakeupTime">wake time</label>
+          <input type="time" id="wakeupTime" name="wakeupTime" value="00:00" class="medFormElem">
+        </div>
+	<input type="checkbox" checked="M" name="Monday" value="true" id="Monday">
+        <label for="Monday" class="chkBoxLabel">Monday</label>
+	<input type="checkbox" checked="T" name="Tuesday" value="true" id="Tuesday">
+        <label for="Tuesday" class="chkBoxLabel">Tuesday</label>
+	<input type="checkbox" checked="W" name="Wednesday" value="true" id="Wednesday">
+        <label for="Wednesday" class="chkBoxLabel">Wednesday</label>
+	<input type="checkbox" checked="TH" name="Thursday" value="true" id="Thursday">
+        <label for="Thursday" class="chkBoxLabel">Thursday</label>
+	<input type="checkbox" checked="F" name="Friday" value="true" id="Friday">
+        <label for="Friday" class="chkBoxLabel">Friday</label>
+	<input type="checkbox" checked="S" name="Saturday" value="true" id="Saturday">
+        <label for="Saturday" class="chkBoxLabel">Saturday</label>
+	<input type="checkbox" checked="SU" name="Sunday" value="true" id="Sunday">
+        <label for="Sunday" class="chkBoxLabel">Sunday</label>
+        <hr>
+        <div class="row">
+          <h3>Display Settings</h3>
+          <!--resolution-->
+
+          <!--orientation-->
+        </div>
+        <div class="row">
+          <label></label>
+          <input type="checkbox" checked="DM" name="disableMouse" value="true" id="disableMouse">
+          <label for="disableMouse" class="chkBoxLabel">Disable Mouse Cursor</label>
+        </div>
+        <hr>
+	<h3>Audio Settings</h3>
+        <div class="row">
+          <label>Volume</label>
+          0%
+          <input type="range" class="medFormElem" style="width: 175px" id="volume" min="0" max="100" name="volume" value="">
+          100% </div>
+
+	<div id="soundList" class="row">
+            <label for="soundList">select output</label>
+            <select id="soundList" name="soundList">
+              <!--soundList-->
+            </select>
+          </div>
+      </div>
+    </div>
+  </section>
+  <div class="pageActionsContainer">
+    <section>
+      <button type="button" onclick="logout();" class="primaryBtn">Logout</button>
+      <button type="submit" onclick="document.getElementById('my_form').submit(); 
+	swal('changes will be applied shortly');"
+	class="primaryBtn">Save</button>
+    </section>
+  </div>
+</div>
+</form>
+</body>
+</html>

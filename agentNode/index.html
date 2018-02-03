@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Document</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<link rel="stylesheet" href="animate.min.css">
+<style>
+* {
+	margin: 0;
+	padding: 0
+}
+body{background:url(bg.jpg) no-repeat center center; background-size:cover; overflow:hidden; width:100vw; height:100vh}
+#screenContainer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden
+}
+#screenContainer embed {
+	width: 100%;
+	height: 100%
+}
+</style>
+</head>
+<body>
+
+<div id="screenContainer">
+  <object>
+    <embed src='right-col.html'  class='animated slideInLeft'> </embed>
+  </object>
+</div>
+
+<script  type="text/javascript">
+var screen = "<object><embed src='http://13.84.42.133/screen/dev-show-7/' class='animated Fade In Up Big'> </embed></object>"
+var news = $("#screenContainer");
+news.html(screen);
+    </script>
+</body>
+</html>

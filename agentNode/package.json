@@ -1,0 +1,33 @@
+{
+  "name": "agent",
+  "version": "1.1.0",
+  "description": "Player agent",
+  "main": "app.js",
+  "dependencies": {
+    "async": "^2.3.0",
+    "body-parser": "^1.17.1",
+    "chromedriver": "^2.29.0",
+    "desktop-screenshot": "^0.1.1",
+    "diskusage": "^0.2.1",
+    "dnode": "^1.2.2",
+    "express": "^4.15.2",
+    "express-session": "^1.15.2",
+    "formidable": "^1.1.1",
+    "jsonwebtoken": "^7.3.0",
+    "log4js": "^1.1.1",
+    "moment": "^2.18.1",
+    "request": "^2.81.0",
+    "selenium-webdriver": "^3.3.0",
+    "url-parse": "^1.1.8"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "./agent.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://rmg-dev.visualstudio.com/DefaultCollection/Maestro/_git/AgentNodeJS"
+  },
+  "author": "RMG Networks",
+  "license": "ISC"
+}
